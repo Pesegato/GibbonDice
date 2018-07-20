@@ -60,6 +60,14 @@ public class GibbonDice extends BaseAppState {
         return root.get(folder);
     }
 
+    public static String getAnyExceptFor(String folder, String unobtainable) {
+        String outcome = null;
+        do {
+            outcome = root.get(folder);
+        } while (outcome.equals(unobtainable));
+        return outcome;
+    }
+
     @Override
     protected void cleanup(Application app) {
     }
