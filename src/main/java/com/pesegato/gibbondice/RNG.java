@@ -18,6 +18,10 @@ public class RNG {
         return rng.nextFloat();
     }
 
+    public static Object getRandomObject(Object[] o){
+        return o[rng.nextInt(o.length)];
+    }
+
     public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
         int x = rng.nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];
