@@ -74,7 +74,7 @@ public class GDNode {
         }
         bag = childrenWeights[childrenWeights.length - 1];
         for (int i = 0; i < childrenWeights.length; i++) {
-            log.info(M_gibbondice, "BaboonDice: {} {}", children.get(i).outcome, childrenWeights[i]);
+            log.info(M_gibbondice, "GibbonDice: {} {}", children.get(i).outcome, childrenWeights[i]);
         }
 
         for (GDNode child : children) {
