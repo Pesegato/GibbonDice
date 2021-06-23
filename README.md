@@ -1,4 +1,4 @@
-# GibbonDice
+# GibbonDice [![](https://jitpack.io/v/Pesegato/gibbondice.svg)](https://jitpack.io/#Pesegato/gibbondice)
 RNG utilities for jMonkeyEngine
 
 Step 1: Compile/include this library
