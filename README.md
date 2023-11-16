@@ -1,5 +1,13 @@
-# GibbonDice [![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice)](https://central.sonatype.com/artifact/io.github.pesegato/GibbonDice)
-RNG utilities for jMonkeyEngine
+<div align="center"><img alt="Static Badge" src="https://img.shields.io/badge/Gibbon-Dice-yellow?style=for-the-badge&logo=github"  height="100" align="center">
+
+ # RNG utilities for jMonkeyEngine
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.pesegato/GibbonDice) 
+[![javadoc](https://javadoc.io/badge2/io.github.pesegato/GibbonDice/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.pesegato/GibbonDice) 
+
+</div>
+
+## Instructions
 
 Step 1: Compile/include this library
 
