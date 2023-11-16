@@ -1,4 +1,4 @@
-# GibbonDice ![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice?link=https%3A%2F%2Fimg.shields.io%2Fmaven-central%2Fv%2Fio.github.pesegato%2FGibbonDice)
+# GibbonDice ![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice?link=https%3A%2F%2Fcentral.sonatype.com%2Fartifact%2Fio.github.pesegato%2FGibbonDice)
 RNG utilities for jMonkeyEngine
 
 Step 1: Compile/include this library
