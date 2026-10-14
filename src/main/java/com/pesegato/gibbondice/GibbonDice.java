@@ -61,6 +61,10 @@ public class GibbonDice extends BaseAppState {
     }
 
     public static String getAnyExceptFor(String folder, String unobtainable) {
+        GDNode node = root.getChild(folder);
+        if (node == null || !node.hasOutcomeOtherThan(unobtainable)) {
+            throw new IllegalArgumentException("No selectable alternative in folder: " + folder);
+        }
         String outcome = null;
         do {
             outcome = root.get(folder);

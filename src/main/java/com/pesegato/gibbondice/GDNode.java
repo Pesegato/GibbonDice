@@ -82,6 +82,18 @@ public class GDNode {
         }
     }
 
+    boolean hasOutcomeOtherThan(String excluded) {
+        if (children.isEmpty()) {
+            return weight > 0 && !outcome.equals(excluded);
+        }
+        for (GDNode child : children) {
+            if (child.weight > 0 && child.hasOutcomeOtherThan(excluded)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String get(String folder) {
         GDNode odd = getChild(folder).get();
         while (!odd.children.isEmpty()) {
