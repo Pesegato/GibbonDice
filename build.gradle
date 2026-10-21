@@ -1,39 +1,108 @@
 plugins {
     id 'java-library'
-    id "maven-publish"
-    id "idea"
-    id 'signing'
-    id 'com.palantir.git-version' version '3.0.0'
+    id 'maven-publish'
+    id 'com.vanniktech.maven.publish' version '0.37.0'
+    id 'com.palantir.git-version' version '5.1.0'
 }
 
-group 'io.github.pesegato'
-version gitVersion()
+def gitDetails = versionDetails()
 
-println("version : '${version}'")
+// Github wants v1.0.0, Maven Central wants 1.0.0
+def rawTag = gitDetails.lastTag
+def cleanTag = (rawTag != null && rawTag.startsWith("v")) ? rawTag.substring(1) : rawTag
+def isSnapshot = !gitDetails.isCleanTag
 
-ext {
-    jvm = org.gradle.internal.jvm.Jvm.current()
-    javaVersion = JavaVersion.current()
-    isCiServer = System.getenv("TRAVIS") || System.getenv().containsKey("TEAMCITY_VERSION") || hasProperty('CI') || System.getenv("JITPACK")
-    isWindows = org.gradle.internal.os.OperatingSystem.current().windows
-}
+group = 'io.github.pesegato'
+version = isSnapshot
+        ? "${cleanTag}-SNAPSHOT"
+        : cleanTag
+
+println("version : '${version}'  (snapshot: ${isSnapshot})")
 
 repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/Pesegato/GoldMonkey")
+        credentials {
+            username = project.findProperty("gh_user") ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("gh_token") ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
     mavenCentral()
 }
 
-def jme3 = ["v" : '3.4.0-stable', "g": "org.jmonkeyengine"]
-def pesegato = ["g" :"com.pesegato" ,"v":"latest.integration"]
-if (isCiServer){
-    pesegato.g="com.github.Pesegato"
-    pesegato.v="-SNAPSHOT"
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+// =====================================================
+// GitHub Packages
+// =====================================================
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/pesegato/gibbondice")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+// =====================================================
+// Maven Central (solo per le release stabili)
+// =====================================================
+mavenPublishing {
+    publishToMavenCentral(true)
+
+    if (file("/tmp/secring.gpg").exists()) {
+        signAllPublications()
+    }
+
+    coordinates(group.toString(), 'gibbondice', version.toString())
+
+    pom {
+        name = 'GibbonDice'
+        description = 'RNG utilities for jMonkeyEngine'
+        url = 'https://github.com/pesegato/gibbondice/'
+        inceptionYear = '2017'
+
+        licenses {
+            license {
+                name = 'BSD 3-Clause License'
+                url = 'https://github.com/pesegato/gibbondice/blob/main/LICENSE'
+                distribution = 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id = 'pesegato'
+                name = 'Pesegato Ameiurus Melas'
+                email = 'pesegato@outlook.com'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:git://github.com/pesegato/gibbondice.git'
+            developerConnection = 'scm:git:ssh://git@github.com/pesegato/gibbondice.git'
+            url = 'https://github.com/pesegato/gibbondice/'
+        }
+    }
+}
+
+ext {
+    javaVersion = JavaVersion.current()
+    jmeVersion = "3.6.1-stable"
 }
 
 dependencies {
     // jme
-    implementation "${jme3.g}:jme3-core:${jme3.v}"
+    implementation "org.jmonkeyengine:jme3-core:$jmeVersion"
     implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'io.github.pesegato:GoldMonkey:0.7.5'
+    implementation 'io.github.pesegato:goldmonkey:0.7.7'
     implementation 'com.google.code.gson:gson:2.10.1'
 
     //Those are jme3 additional library uncomment the ones you need
@@ -56,64 +125,60 @@ dependencies {
 
 }
 
-signing {
-    sign publishing.publications
-}
+// =====================================================
+// Generazione di BuildInfo.java
+// =====================================================
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            pom {
-                name = 'GibbonDice'
-                description = 'RNG utilities for jMonkeyEngine'
-                url = 'https://github.com/Pesegato/GibbonDice/'
-                inceptionYear = '2017'
-                licenses {
-                    license {
-                        name = 'BSD 3-Clause License'
-                        url = 'https://github.com/Pesegato/GibbonDice/blob/main/LICENSE'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'pesegato'
-                        name = 'Pesegato Ameiurus Melas'
-                        email = 'pesegato@outlook.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://github.com/pesegato/gibbondice.git'
-                    developerConnection = 'scm:git:ssh://git@github.com/pesegato/gibbondice.git'
-                    url = 'https://github.com/Pesegato/GibbonDice/'
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            url "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
-            }
-        }
+def buildInfoPackage = "io.github.pesegato." + rootProject.name.toLowerCase()
+def buildInfoClass = "${rootProject.name}BuildInfo"
+
+tasks.register('generateBuildInfo') {
+    def outputDir = layout.buildDirectory.dir("generated/sources/build-info/java")
+
+    // Input: la versione del progetto
+    inputs.property("version", provider { version.toString() })
+
+    // Output: la directory dove viene generata la classe
+    outputs.dir(outputDir)
+
+    doLast {
+        def packagePath = buildInfoPackage.replace('.', '/')
+        def dir = outputDir.get().asFile
+        def packageDir = new File(dir, packagePath)
+        packageDir.mkdirs()
+
+        def buildDate = new Date().format("yyyy-MM-dd HH:mm")
+        def versionValue = version.toString()
+
+        def file = new File(packageDir, "${buildInfoClass}.java")
+        file.text = """\
+package ${buildInfoPackage};
+
+/**
+ * Informazioni di build generate automaticamente da Gradle.
+ * Non modificare questo file a mano.
+ */
+public final class ${buildInfoClass} {
+
+    public static final String VERSION = "${versionValue}";
+    public static final String BUILD_DATE = "${buildDate}";
+
+    private ${buildInfoClass}() {
+        // utility class
     }
 }
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+"""
+        println "Generated ${buildInfoClass}.java → version=${versionValue}, date=${buildDate}"
     }
-    withJavadocJar()
-    withSourcesJar()
 }
 
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceSets {
+    main {
+        java.srcDir(generateBuildInfo.outputs)
+    }
+}
 
-compileJava.doLast {
-    def buildDate = new Date().format('yyyy-MM-dd HHmm')
-    println "Writing ${rootProject.name}.build.date: " + buildDate
-    destinationDirectory.file("${rootProject.name}.build.date").get().asFile.text = buildDate
-    destinationDirectory.file("${rootProject.name}.build.version").get().asFile.text = "${version}"
+// Assicurati che la generazione avvenga prima della compilazione
+tasks.named('compileJava') {
+    dependsOn('generateBuildInfo')
 }

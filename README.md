@@ -2,16 +2,20 @@
 
  # RNG utilities for jMonkeyEngine
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.pesegato/GibbonDice) 
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.pesegato/GibbonDice)
+[![GitHub Packages](https://img.shields.io/github/v/tag/Pesegato/GibbonDice?label=GitHub%20Packages&style=for-the-badge)](https://github.com/Pesegato/GibbonDice/packages/3277776)
 [![javadoc](https://javadoc.io/badge2/io.github.pesegato/GibbonDice/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.pesegato/GibbonDice) 
 
 </div>
 
+<div align="center"><img alt="GibbonDice Logo" src="gibbondice-logo.png" align="center">
+</div>
+
 ## Instructions
 
-Step 1: Compile/include this library
+### Step 1: Compile/include this library
 
-Step 2: Create file named `GibbonDice.json` on the `GoldMonkey` folder, like this:
+### Step 2: Create file named `GibbonDice.json` on the `GoldMonkey` folder, like this:
 
 ```
 [
@@ -31,9 +35,9 @@ Step 2: Create file named `GibbonDice.json` on the `GoldMonkey` folder, like thi
 ]
 ```
 
-Step 3: Attach the GibbonDice appstate to your application
+### Step 3: Attach the GibbonDice appstate to your application
 
-Step 4: Invoke GibbonDice.get("mammal") and you will receive either monkey, cat, or dog with 7/10, 2/10 and 1/10 probability respectively.
+### Step 4: Invoke GibbonDice.get("mammal") and you will receive either monkey, cat, or dog with 7/10, 2/10 and 1/10 probability respectively.
 
 It also supports hierarchical outcomes, for example:
 
