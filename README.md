@@ -3,7 +3,7 @@
  # RNG utilities for jMonkeyEngine
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.pesegato/GibbonDice?style=for-the-badge)](https://central.sonatype.com/artifact/io.github.pesegato/GibbonDice)
-[![GitHub Packages](https://img.shields.io/github/v/tag/Pesegato/GibbonDice?label=GitHub%20Packages&style=for-the-badge)](https://github.com/Pesegato/GibbonDice/packages/3277776)
+[![GitHub Packages](https://img.shields.io/github/v/tag/Pesegato/GibbonDice?label=GitHub%20Packages&style=for-the-badge)](https://github.com/Pesegato/GibbonDice/packages/3331567)
 [![javadoc](https://javadoc.io/badge2/io.github.pesegato/GibbonDice/javadoc.svg?style=for-the-badge)](https://javadoc.io/doc/io.github.pesegato/GibbonDice) 
 
 </div>
@@ -41,6 +41,7 @@
 
 It also supports hierarchical outcomes, for example:
 
+```
 animal.mammal 2
 
 animal.reptilian 1
@@ -52,6 +53,7 @@ animal.mammal.cat 5
 animal.reptilian.lizard 2
 
 animal.reptilian.snake 3
+```
 
 This time, the outcome will either be 2/3 mammal or 1/3 reptilian:
 
